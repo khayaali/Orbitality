@@ -1,0 +1,27 @@
+# ORBIT — Netlify configuration
+# This is a fully static single-page app. No build step required.
+
+[build]
+  publish = "."
+  command = ""
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Never cache the HTML or the service worker (so updates deploy instantly)…
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# …but let the browser cache icons for a while.
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
