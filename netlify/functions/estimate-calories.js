@@ -1,4 +1,4 @@
-  exports.handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: JSON.stringify({ error: "POST only" }) };
   }
@@ -23,22 +23,28 @@
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01"
+        "x-api-key": apiKey
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 200,
-        system: "You are a nutrition estimator. Given a meal description, estimate TOTAL calories. Reply ONLY with JSON: {\"kcal\": <number>}",
-        messages: [{ role: "user", content: text }]
+        max_tokens: 100,
+        messages: [
+          {
+            role: "user",
+            content: `Estimate the total calories in this meal. Reply ONLY with a JSON object like {"kcal": 350}. Meal: ${text}`
+          }
+        ]
       })
     });
 
+    const responseText = await response.text();
+    console.log("API Response:", response.status, responseText);
+
     if (!response.ok) {
-      throw new Error(`Anthropic API returned ${response.status}`);
+      throw new Error(`API ${response.status}: ${responseText}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     const content = (data.content || []).find(b => b.type === "text")?.text || "";
     const json = JSON.parse(content.replace(/```json|```/g, "").trim());
 
