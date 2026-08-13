@@ -23,7 +23,8 @@ exports.handler = async (event) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01"
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
@@ -31,7 +32,7 @@ exports.handler = async (event) => {
         messages: [
           {
             role: "user",
-            content: `Estimate the total calories in this meal. Reply ONLY with a JSON object like {"kcal": 350}. Meal: ${text}`
+            content: `Estimate the total calories in this meal. Reply ONLY with JSON like {"kcal": 350}. Meal: ${text}`
           }
         ]
       })
